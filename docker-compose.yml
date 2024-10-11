@@ -1,0 +1,134 @@
+version: '3.8'
+services:
+  eureka:
+    image: kduah/eurekaservice
+    container_name: eurekaservice
+    ports:
+      - "8761:8761"
+    networks:
+      - microservice-network
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8761/ || exit 1"]
+      interval: 10s
+      retries: 5
+      start_period: 30s
+      timeout: 10s
+
+  postgres:
+    image: postgres:13
+    environment:
+      POSTGRES_DB: micros
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: duaSHKH229
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    depends_on:
+      - eureka
+    networks:
+      - microservice-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U admin -d micros"]
+      interval: 10s
+      retries: 5
+      start_period: 20s
+      timeout: 10s
+
+
+  userservice:
+    image: kduah/userservice
+    container_name: userservice
+    ports:
+      - "9091:9091"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5433/micros
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=duaSHKH229
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eurekaservice:8761/eureka/
+      - SPRING_PROFILES_ACTIVE=prod
+    depends_on:
+      - eureka
+      - postgres
+    networks:
+      - microservice-network
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:9091/actuator/health || exit 1"]
+      interval: 10s
+      retries: 5
+      start_period: 30s
+      timeout: 10s
+
+  specializationservice:
+    image: kduah/specializationservice
+    container_name: specializationservice
+    ports:
+      - "8084:8084"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5433/micros
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=duaSHKH229
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eurekaservice:8761/eureka/
+      - SPRING_PROFILES_ACTIVE=prod
+    depends_on:
+      - eureka
+      - postgres
+    networks:
+      - microservice-network
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8084/actuator/health || exit 1"]
+      interval: 10s
+      retries: 5
+      start_period: 30s
+      timeout: 10s
+
+  cohortservice:
+    image: kduah/cohortservice
+    container_name: cohortservice
+    ports:
+      - "8086:8086"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5433/micros
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=duaSHKH229
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eurekaservice:8761/eureka/
+      - SPRING_PROFILES_ACTIVE=prod
+    depends_on:
+      - eureka
+      - postgres
+    networks:
+      - microservice-network
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8086/actuator/health || exit 1"]
+      interval: 10s
+      retries: 5
+      start_period: 30s
+      timeout: 10s
+
+  gatewayservice:
+    image: kduah/gatewayservice
+    container_name: gatewayservice
+    ports:
+      - "8080:8080"
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eurekaservice:8761/eureka/
+    depends_on:
+      - eureka
+      - userservice
+      - specializationservice
+      - cohortservice
+    networks:
+      - microservice-network
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8080/actuator/health || exit 1"]
+      interval: 10s
+      retries: 5
+      start_period: 30s
+      timeout: 10s
+
+volumes:
+  postgres-data:
+
+networks:
+  microservice-network:
+    driver: bridge

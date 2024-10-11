@@ -1,0 +1,15 @@
+spring:
+  application:
+    name: eureka-server
+
+server:
+  port: 8761
+
+eureka:
+  client:
+    register-with-eureka: false
+    fetch-registry: false
+    registry-fetch-interval-seconds: 30
+    instance-info-replication-interval-seconds: 30
+    eureka-server-read-timeout-seconds: 30000000
+    eureka-server-connect-timeout-seconds: 300000000

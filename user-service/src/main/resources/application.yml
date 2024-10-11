@@ -1,0 +1,53 @@
+# spring:
+#   application:
+#     name: USER-SERVICE
+
+#   datasource:
+#     url: jdbc:postgresql://localhost:5432/micros
+#     username: postgres
+#     password: duaSHKH229
+#     driver-class-name: org.postgresql.Driver
+
+#   jpa:
+#     hibernate:
+#       ddl-auto: update
+#     show-sql: true
+#     database-platform: org.hibernate.dialect.PostgreSQLDialect
+
+#   main:
+#     allow-bean-definition-overriding: true
+
+#   # config:
+#   #   import: http://localhost:8888/
+
+# server:
+#   port: 9091
+
+# jwt:
+#   secret: God-is-the greatestALWAYS-3hc56GNAWING-STROMBOLLING7889-939
+#   expiration: 3600000
+
+# cohort:
+#   service:
+#     url: http://localhost:8086
+
+# specialization:
+#   service:
+#     url: http://localhost:8084
+
+# eureka:
+#   instance:
+#     hostname: localhost
+#     prefer-ip-address: true
+#   client:
+#     serviceUrl:
+#       defaultZone: http://localhost:8761/eureka/
+#     register-with-eureka: true
+#     fetch-registry: true
+
+# management:
+#   endpoints:
+#     web:
+#       exposure:
+#         include: health,info,metrics
+

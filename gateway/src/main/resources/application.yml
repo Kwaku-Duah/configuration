@@ -1,0 +1,71 @@
+spring:
+  application:
+    name: GATEWAY
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+      httpclient:
+        connect-timeout: 60000
+        response-timeout: 60000
+      routes:
+        - id: USER-SERVICE
+          uri: lb://USER-SERVICE
+          predicates:
+            - Path=/v1/auth/**
+        - id: SPECIALIZATION-SERVICE
+          uri: lb://SPECIALIZATION-SERVICE
+          predicates:
+            - Path=/api/specialization/**
+        - id: COHORT-SERVICE
+          uri: lb://COHORT-SERVICE
+          predicates:
+            - Path=/api/cohort/**
+      default-filters:
+        - AuthenticationFilter
+
+  main:
+    allow-circular-references: true
+
+    
+
+# ... rest of the configuration remains the same
+
+# JWT Configuration
+jwt:
+  secret: God-is-the-greatestALWAYS-3hc56GNAWING-STROMBOLLING7889-939
+  expiration: 3600000
+
+# Management Endpoints Configuration
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+
+# Eureka Client Configuration
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
+    register-with-eureka: true
+    fetch-registry: true
+  instance:
+    prefer-ip-address: true
+    hostname: localhost
+
+# Logging Configuration
+logging:
+  level:
+    org:
+      springframework:
+        cloud:
+          gateway: DEBUG
+      netflix:
+        eureka: DEBUG
+
+# User Service URL
+auth:
+  service:
+    url: http://localhost:9091
